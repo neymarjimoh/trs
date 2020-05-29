@@ -1,8 +1,12 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const config = require('./config/index');
+const mongoDbConnection = require('./config/dbconfig');
+
+//load the database
+mongoDbConnection();
 
 const app = express();
 
@@ -34,14 +38,12 @@ app.use((error, req, res, next) => {
 	if (error.status === 404)
 		res.status(404).json({ message: 'Invalid Request, Request Not found' });
 	else
-		res
-			.status(500)
-			.json({
-				message: 'Oops, problem occurred while processing your request..',
-			});
+		res.status(500).json({
+			message: 'Oops, problem occurred while processing your request..',
+		});
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = config.PORT;
 
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT} 🔥`);
