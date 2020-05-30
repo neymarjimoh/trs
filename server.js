@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const config = require('./config/index');
 const mongoDbConnection = require('./config/dbconfig');
+const authRoute = require("./routes/auth.routes");
 
 //load the database
 mongoDbConnection();
@@ -26,6 +27,8 @@ app.get('/api/v1', (req, res) => {
         Please read the api documentation for how to go about its usage..
     `);
 });
+
+app.use("/api/v1/auth", authRoute);
 
 // You can set 404 and 500 errors
 app.use((req, res, next) => {
