@@ -1,11 +1,11 @@
 const statusCode = require("http-status");
 const bcrypt = require('bcryptjs');
 const sendMail = require("../utils/sendMail");
-const { User } = require("../models");
+const { Passenger } = require("../models");
 
-exports.userSignUp = async (req, res) => {
-    const { email, password, phoneNumber } = req.body;
-    const userExists = await User.findOne({ email });
+exports.passengerSignUp = async (req, res) => {
+    const { email, password, mobile_num, fullname, address } = req.body;
+    const userExists = await Passenger.findOne({ email });
     if (userExists) {
         return res.status(statusCode.CONFLICT).json({
             message: "User already exists"
@@ -13,15 +13,17 @@ exports.userSignUp = async (req, res) => {
     }
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({
-            email,
+        const user = new Passenger({
+            email, 
+            fullname,
             password: hashedPassword,
-            phoneNumber
+            address,
+            mobile_num           
         });
         const savedUser = await user.save();
         sendMail.sendConfirmEmail(savedUser); // sends activation link
         return res.status(statusCode.OK).json({
-            messages: "Account created. Please check your email, you will receive a confirmation mail in few minutes."
+            message: "Account created. Please check your email, you will receive a confirmation mail in few minutes."
         });
     } catch (error) {
         console.error(error);
@@ -31,10 +33,10 @@ exports.userSignUp = async (req, res) => {
     }
 };
 
-exports.activateUserAccount = async (req, res) => {
+exports.activatePassengerAccount = async (req, res) => {
     const { email } = req.params;
     try {
-        const userFound = await User.findOneAndUpdate({ email }, { isverified: true });
+        const userFound = await Passenger.findOneAndUpdate({ email }, { is_verified: true });
         if (!userFound) {
             return res.status(statusCode.NOT_FOUND).json({
                 message: `Account ${email} doesn't exist`
@@ -51,10 +53,10 @@ exports.activateUserAccount = async (req, res) => {
     }
 };
 
-exports.userSignIn = (req, res) => {
+exports.passengerSignIn = (req, res) => {
 
 };
 
-exports.userLogOut = (req, res) => {
+exports.passengerLogOut = (req, res) => {
 
 }
