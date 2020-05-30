@@ -5,9 +5,11 @@ const mongoDbUrl = config.MONGODBURI;
 
 //function that handles the database connection
 module.exports = () => {
-	mongoose.connect(mongoDbUrl, {
+	mongoose.connect('mongodb://127.0.0.1:27017/trs', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
+		useCreateIndex: true,
+		useFindAndModify: false
 	});
 
 	mongoose.connection.on('connected', function () {
