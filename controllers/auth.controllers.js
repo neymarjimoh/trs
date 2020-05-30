@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const sendMail = require("../utils/sendMail");
 const { Passenger } = require("../models");
 
-exports.passengerSignUp = async (req, res) => {
+exports.userSignUp = async (req, res) => {
     const { email, password, mobile_num, fullname, address } = req.body;
     const userExists = await Passenger.findOne({ email });
     if (userExists) {
@@ -33,7 +33,7 @@ exports.passengerSignUp = async (req, res) => {
     }
 };
 
-exports.activatePassengerAccount = async (req, res) => {
+exports.activateUserAccount = async (req, res) => {
     const { email } = req.params;
     try {
         const userFound = await Passenger.findOneAndUpdate({ email }, { is_verified: true });
@@ -53,10 +53,10 @@ exports.activatePassengerAccount = async (req, res) => {
     }
 };
 
-exports.passengerSignIn = (req, res) => {
+exports.userSignIn = (req, res) => {
 
 };
 
-exports.passengerLogOut = (req, res) => {
+exports.userLogOut = (req, res) => {
 
 }

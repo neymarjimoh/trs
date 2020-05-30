@@ -19,10 +19,11 @@ function setup() {
 exports.sendConfirmEmail = (data) => {
   const transport = setup();
   const userEmail = data.email;
-  const generateConfirmationUrl = `http://localhost:4000/api/v1/auth/passenger/verify/${userEmail}`;
+  const userName = data.fullname;
+  const generateConfirmationUrl = `http://localhost:4000/api/v1/auth/verify/${userEmail}`;
 
   const msg = {
-    from,
+    from: EMAIL_ADDRESS,
     to: userEmail,
     subject: "Activate your account",
     text: `
@@ -30,6 +31,7 @@ exports.sendConfirmEmail = (data) => {
     `,
     html: `
       <h2 style="display: flex; align-items: center;">Welcome to TRS</h2>
+        <p>Hello ${userName},</p>
         <p>Please activate your account using <a href=${generateConfirmationUrl}>this link</a>
          🎊 🎉 🚀</p>
     `,
