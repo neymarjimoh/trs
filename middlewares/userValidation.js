@@ -6,15 +6,21 @@ const userValidationRules = () => {
         .isEmail()
         .withMessage("Enter a valid email")
         .normalizeEmail(),
+        body('fullname')
+        .isLength({ min: 8, max: 50 })
+        .withMessage('Full name must between at least 8 characters long'),
         body('password')
         .not().isEmpty()
         .isLength({ min: 8 })
         .withMessage('Password must have at least 8 characters'),
-        body('phoneNumber')
+        body('mobile_num')
         .isLength({ min: 10, max: 15 })
         .withMessage('Mobile Number must between 10 to 15 characters long')
         .matches(/^[+-\d]+$/)
         .withMessage('Mobile Number must be a valid Nigerian number'),
+        body('address')
+        .not().isEmpty()
+        .withMessage("Enter a valid address")
     ] 
 }
 

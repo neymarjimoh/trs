@@ -7,12 +7,8 @@ const EMAIL_PASSWORD = config.EMAIL_PASS;
 
 function setup() {
   return nodemailer.createTransport({
-    // host: "smtp.gmail.com",
-    // port: 587,
-    // secure: false,
     service: 'Gmail',
     port: 465,
-    // service: "Gmail",
     auth: {
       user: EMAIL_ADDRESS,
       pass: EMAIL_PASSWORD,
@@ -23,6 +19,7 @@ function setup() {
 exports.sendConfirmEmail = (data) => {
   const transport = setup();
   const userEmail = data.email;
+  const userName = data.fullname;
   const generateConfirmationUrl = `http://localhost:4000/api/v1/auth/verify/${userEmail}`;
 
   const msg = {
@@ -34,6 +31,7 @@ exports.sendConfirmEmail = (data) => {
     `,
     html: `
       <h2 style="display: flex; align-items: center;">Welcome to TRS</h2>
+        <p>Hello ${userName},</p>
         <p>Please activate your account using <a href=${generateConfirmationUrl}>this link</a>
          🎊 🎉 🚀</p>
     `,
