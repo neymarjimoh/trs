@@ -4,7 +4,8 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const config = require('./config/index');
 const mongoDbConnection = require('./config/dbconfig');
-const authRoute = require("./routes/auth.routes");
+const authRoute = require('./routes/auth.routes');
+const verifyToken = require('./middlewares/verifyToken');
 
 //load the database
 mongoDbConnection();
@@ -28,7 +29,9 @@ app.get('/api/v1', (req, res) => {
     `);
 });
 
-app.use("/api/v1/auth", authRoute);
+app.use(verifyToken);
+
+app.use('/api/v1/auth', authRoute);
 
 // You can set 404 and 500 errors
 app.use((req, res, next) => {
@@ -40,10 +43,12 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
 	if (error.status === 404)
 		res.status(404).json({ message: 'Invalid Request, Request Not found' });
-	else
+	else {
+		console.log(error);
 		res.status(500).json({
 			message: 'Oops, problem occurred while processing your request..',
 		});
+	}
 });
 
 const PORT = config.PORT;
