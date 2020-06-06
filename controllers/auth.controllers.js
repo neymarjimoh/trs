@@ -24,7 +24,7 @@ exports.userSignUp = async (req, res) => {
             messages: "Account created. Please check your email, you will receive a confirmation mail in few minutes."
         });
     } catch (error) {
-        console.error(error);
+        console.log("Error from user sign up >>>>> ",error);
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
             message: "Something went wrong. Try again."
         });
@@ -44,7 +44,7 @@ exports.activateUserAccount = async (req, res) => {
             message: "Account verification successful. You can login"
         });
     } catch (error) {
-        console.error(error);
+        console.log("Error from user account activation >>>>> ",error);
         return res.status(statusCode.SERVICE_UNAVAILABLE).json({
             message: 'Something went wrong. Please try again..'
         });

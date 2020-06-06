@@ -1,6 +1,5 @@
 module.exports = {
-	Admin: require('./Admin.model'),
-	Passenger: require('./Passenger.model'),
+	User: require('./User.model'),
 	Train: require('./Train.model'),
 	Booking: require('./Booking.model'),
 	Ticket: require('./Ticket.model'),

@@ -5,5 +5,6 @@ const { validate, userValidationRules } = require("../middlewares/userValidation
 
 router.post("/register", userValidationRules(), validate, userSignUp); // register user
 router.patch("/verify/:email", activateUserAccount); //verify account before you can login
+router.post("/login", )
 
 module.exports = router;
