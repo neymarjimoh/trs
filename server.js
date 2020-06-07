@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const config = require('./config/index');
+const config = require('./config');
 const mongoDbConnection = require('./config/dbconfig');
 const authRoute = require('./routes/auth.routes');
+const userRoute = require('./routes/user.routes');
 const verifyToken = require('./middlewares/verifyToken');
+const isAdmin = require('./middlewares/isAdmin');
 
 //load the database
 mongoDbConnection();
@@ -30,8 +32,10 @@ app.get('/api/v1', (req, res) => {
 });
 
 app.use(verifyToken);
+app.use(isAdmin);
 
 app.use('/api/v1/auth', authRoute);
+app.use('/api/v1/users', userRoute);
 
 // You can set 404 and 500 errors
 app.use((req, res, next) => {

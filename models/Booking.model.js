@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const bookingSchema = new mongoose.Schema(
+const bookingSchema = new Schema(
 	{
 		passenger: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Passenger',
+			type: Schema.Types.ObjectId,
+			ref: 'User',
 		},
 		train: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: 'Train',
 		},
 		from: {

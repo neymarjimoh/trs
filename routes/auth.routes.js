@@ -5,6 +5,8 @@ const {
 	userSignIn,
 	activateUserAccount,
 	userLogOut,
+	forgetPassword,
+	resetPassword
 } = require('../controllers/auth.controllers');
 const {
 	validate,
@@ -12,8 +14,10 @@ const {
 	userSignInValidationRules,
 } = require('../middlewares/userValidation');
 
-router.post('/register', userValidationRules(), validate, userSignUp); // register user
-router.patch('/verify/:email', activateUserAccount); //verify account before user can login
+router.post('/register', userValidationRules(), validate, userSignUp); 
+router.patch('/verify/:email', activateUserAccount); 
 router.post('/login', userSignInValidationRules(), validate, userSignIn);
+router.post('/forget-password', forgetPassword);
+router.post('/reset-password/:userId', resetPassword);
 router.post('/signout', userSignInValidationRules(), userLogOut);
 module.exports = router;
