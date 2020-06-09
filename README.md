@@ -34,7 +34,7 @@ First, you can send a mail to jemohkunle2007@gmail.com and koladeodutoye9913@gma
 
 
 ## LICENSE
-MIT
+[GPU](https://github.com/neymarjimoh/trs/blob/master/LICENSE)
 
 ## Documentation
 [Blog API Documentation](https://documenter.getpostman.com/)
