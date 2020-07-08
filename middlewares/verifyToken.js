@@ -11,7 +11,8 @@ module.exports = (req, res, next) => {
 
 		if (!authHeader) {
 			return res.status(statusCode.PRECONDITION_FAILED).json({
-				message: 'Access denied!!! Missing credentials'
+				message:
+					'Access denied!!! Missing credentials... try to sign in or sign up',
 			});
 		}
 
@@ -29,9 +30,9 @@ module.exports = (req, res, next) => {
 			next();
 			return;
 		} catch (error) {
-			console.log("Error from token verification >>>>> ", error);
+			console.log('Error from token verification >>>>> ', error);
 			res.status(statusCode.FORBIDDEN).json({
-				message: 'Something went wrong. Please try again..'
+				message: 'Something went wrong. Please try again..',
 			});
 		}
 	} else {
