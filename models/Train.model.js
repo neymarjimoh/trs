@@ -8,6 +8,10 @@ const trainSchema = new mongoose.Schema(
 			unique: true,
 		},
 		capacity: {
+			/* 
+			we'd still have to change this field. Classes in trains are more than these 
+			but just for testing purpose, we should stick with these for now.
+			*/
 			first_class: { type: Number, required: true },
 			second_class: { type: Number, required: true },
 		},
@@ -27,7 +31,7 @@ const trainSchema = new mongoose.Schema(
 		passengers: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Passenger',
+				ref: 'User',
 			},
 		],
 	},

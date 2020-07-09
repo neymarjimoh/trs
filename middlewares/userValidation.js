@@ -39,6 +39,45 @@ const userSignInValidationRules = () => {
 	];
 };
 
+//train input validation
+const trainValidationRules = () => {
+	return [
+		body('capacity.first_class')
+			.notEmpty()
+			.isInt()
+			.withMessage(`Enter valid number for first class field`),
+		body('capacity.second_class')
+			.notEmpty()
+			.isInt()
+			.withMessage(`Enter valid number for second class field`),
+		body('origin').notEmpty().withMessage('origin field must not be empty'),
+		body('destination')
+			.notEmpty()
+			.withMessage('destination field must not be empty'),
+	];
+};
+
+const trainUpdateValidationRules = () => {
+	return [
+		body('capacity.first_class')
+			.optional()
+			.isInt()
+			.withMessage('Enter a valid number for first class field'),
+		body('capacity.second_class')
+			.optional()
+			.isInt()
+			.withMessage('Enter a valid number for second class field'),
+		body('origin')
+			.optional()
+			.isString()
+			.withMessage('origin field must be a string'),
+		body('destination')
+			.optional()
+			.isString()
+			.withMessage('destination field must be a string'),
+	];
+};
+
 const validate = (req, res, next) => {
 	const errors = validationResult(req);
 	if (errors.isEmpty()) {
@@ -55,5 +94,7 @@ const validate = (req, res, next) => {
 module.exports = {
 	userValidationRules,
 	userSignInValidationRules,
+	trainValidationRules,
+	trainUpdateValidationRules,
 	validate,
 };

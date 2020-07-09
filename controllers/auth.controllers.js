@@ -4,10 +4,11 @@ const jwt = require('jsonwebtoken');
 const sendMail = require('../utils/sendMail');
 const { User } = require('../models');
 const config = require('../config');
-const transporter = require ('../utils/transporter');
+const transporter = require('../utils/transporter');
+const { USER, ADMIN } = require('../utils/role');
 
 exports.userSignUp = async (req, res) => {
-	const { email, password, mobile_num, fullname, address } = req.body;
+	const { email, password, mobile_num, fullname, address, role } = req.body;
 	const userExists = await User.findOne({ email });
 	if (userExists) {
 		return res.status(statusCode.CONFLICT).json({
@@ -23,14 +24,28 @@ exports.userSignUp = async (req, res) => {
 			address,
 			mobile_num,
 		});
+		//role set up:
+		if (role) {
+			//check if role is among the role set up
+			if (role === ADMIN) {
+				user.role = ADMIN;
+			} else {
+				res.status(400).json({
+					message: 'The role set is not correct',
+				});
+			}
+		} else {
+			user.role = USER;
+		}
+		let verify = await sendMail.sendConfirmEmail(user); // sends activation link
+
 		const savedUser = await user.save();
-		sendMail.sendConfirmEmail(savedUser); // sends activation link
 		return res.status(statusCode.OK).json({
 			message:
 				'Account created. Please check your email, you will receive a confirmation mail in few minutes.',
 		});
 	} catch (error) {
-		console.log("Error from user sign up >>>>> ", error);
+		console.log('Error from user sign up >>>>> ', error.message);
 		return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
 			message: 'Something went wrong. Try again.',
 		});
@@ -38,10 +53,12 @@ exports.userSignUp = async (req, res) => {
 };
 
 exports.activateUserAccount = async (req, res) => {
-	const { email } = req.params;
+	const { s, email } = req.query;
 	try {
+		const { userId } = await jwt.verify(s, config.EMAIL_SECRET);
+
 		const userFound = await User.findOneAndUpdate(
-			{ email },
+			{ _id: userId },
 			{ is_verified: true }
 		);
 		if (!userFound) {
@@ -53,7 +70,7 @@ exports.activateUserAccount = async (req, res) => {
 			message: 'Account verification successful. You can login',
 		});
 	} catch (error) {
-		console.log("Error from user acount activation >>>>> ", error);
+		console.log('Error from user acount activation >>>>> ', error);
 		return res.status(statusCode.SERVICE_UNAVAILABLE).json({
 			message: 'Something went wrong. Please try again..',
 		});
@@ -89,25 +106,25 @@ exports.userSignIn = async (req, res) => {
 		}
 
 		const accessToken = jwt.sign(
-			{                 
-                userId: validUser._id, 
-                email: validUser.email 
-            },
+			{
+				userId: validUser._id,
+				email: validUser.email,
+			},
 			config.SECRET_KEY,
-			{ 
-                expiresIn: '1d' 
-            }
+			{
+				expiresIn: '1d',
+			}
 		);
 
 		return res.status(statusCode.OK).json({
 			message: 'User signed in successfully',
 			passsenger: validUser,
-			accessToken: accessToken
+			accessToken: accessToken,
 		});
 	} catch (error) {
-		console.log("Error from user sign in >>>>> " ,error);
+		console.log('Error from user sign in >>>>> ', error);
 		return res.status(statusCode.SERVICE_UNAVAILABLE).json({
-			message: 'Something went wrong. Please try again..'
+			message: 'Something went wrong. Please try again..',
 		});
 	}
 };
@@ -151,12 +168,12 @@ exports.forgetPassword = async (req, res) => {
 		transporter.sendMail(msg); // send password link
 		return res.status(statusCode.OK).json({
 			status: 'success',
-            message: `A password reset link has been sent to ${email}`
+			message: `A password reset link has been sent to ${email}`,
 		});
 	} catch (error) {
-		console.log("Error from user password forget >>>>> " ,error);
+		console.log('Error from user password forget >>>>> ', error);
 		return res.status(statusCode.SERVICE_UNAVAILABLE).json({
-			message: 'Something went wrong. Please try again..'
+			message: 'Something went wrong. Please try again..',
 		});
 	}
 };
@@ -166,19 +183,22 @@ exports.resetPassword = async (req, res) => {
 		const { userId } = req.params;
 		const { password } = req.body;
 		const hashedPw = await bcrypt.hash(password, 10);
-		const user = await User.findByIdAndUpdate({ _id: userId }, { $set: { password: hashedPw } });
+		const user = await User.findByIdAndUpdate(
+			{ _id: userId },
+			{ $set: { password: hashedPw } }
+		);
 		if (!user) {
-            return res.status(statusCode.NOT_FOUND).json({
-                message: 'User does not exist.'
-            });
+			return res.status(statusCode.NOT_FOUND).json({
+				message: 'User does not exist.',
+			});
 		}
 		return res.status(statusCode.OK).json({
 			message: 'Password has been updated successfully. You can login',
-		});	
+		});
 	} catch (error) {
-		console.log("Error from user password reset >>>>> " ,error);
+		console.log('Error from user password reset >>>>> ', error);
 		return res.status(statusCode.SERVICE_UNAVAILABLE).json({
-			message: 'Something went wrong. Please try again..'
+			message: 'Something went wrong. Please try again..',
 		});
 	}
 };
